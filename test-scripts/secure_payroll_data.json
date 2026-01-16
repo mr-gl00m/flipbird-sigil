@@ -17,4 +17,5 @@
     "social_security_number": "XXX-XX-XXXX",
     "notes": "This is example data to demonstrate SIGIL's data governance decorators."
   }
+
 }
