@@ -286,7 +286,7 @@ SIGIL is free and public domain (CC0). I built it to prove a point.
 
 If this code saved you from buying an "Enterprise AI Governance Platform," or if you just enjoy watching a <1000 line script out-perform an 18-month SaaS product, feel free to drop a coin in the jar.
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/cidthedev)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/mr_gl00m)
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub_Sponsors-EA4AAA?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sponsors/cidthedev)
 
 **Sovereign Transfer:**
