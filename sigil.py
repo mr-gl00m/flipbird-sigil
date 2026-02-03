@@ -357,6 +357,7 @@ class Sentinel:
         self.verifier = Keyring.load_verifier(key_name)
         self.expected_key_id = Keyring.get_key_id(key_name)
         self._load_crl()
+        self._crl_last_loaded = time.time()
 
     def _load_crl(self):
         """Load Certificate Revocation List."""
@@ -370,6 +371,10 @@ class Sentinel:
         Verify a seal. Returns (valid, message).
         Checks signature, expiration, and revocation status.
         """
+        # Lightweight CRL refresh with 5s TTL to balance freshness vs overhead
+        if time.time() - getattr(self, "_crl_last_loaded", 0) > 5:
+            self._load_crl()
+            self._crl_last_loaded = time.time()
         if not seal.signature or not seal.signer_key_id:
             return False, "UNSIGNED: No signature present"
 
@@ -818,14 +823,13 @@ class SigilRuntime:
         seal = self.loaded_seals[node_id]
 
         # Re-verify at execution time to catch revocations/expiration that occurred after load
-        self.sentinel._load_crl()
         valid, message = self.sentinel.verify(seal)
         if not valid:
             AuditChain.log("execution_denied", {"node_id": node_id, "reason": message})
             raise PermissionError(f"[SIGIL] Execution blocked: {message}")
 
         # Enforce allowed tools list is well-defined (defensive copy against mutation)
-        seal.allowed_tools = list(seal.allowed_tools or [])
+        allowed_tools = list(seal.allowed_tools or [])
 
         # Replay Attack Protection: Check if this is a one-time seal that was already executed
         if seal.one_time:
@@ -849,7 +853,7 @@ class SigilRuntime:
         return {
             "instruction": seal.instruction,
             "user_input_as_data": user_input,
-            "allowed_tools": seal.allowed_tools,
+            "allowed_tools": allowed_tools,
             "metadata": seal.metadata,
             "nonce": seal.nonce
         }
