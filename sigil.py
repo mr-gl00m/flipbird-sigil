@@ -817,6 +817,16 @@ class SigilRuntime:
 
         seal = self.loaded_seals[node_id]
 
+        # Re-verify at execution time to catch revocations/expiration that occurred after load
+        self.sentinel._load_crl()
+        valid, message = self.sentinel.verify(seal)
+        if not valid:
+            AuditChain.log("execution_denied", {"node_id": node_id, "reason": message})
+            raise PermissionError(f"[SIGIL] Execution blocked: {message}")
+
+        # Enforce allowed tools list is well-defined (defensive copy against mutation)
+        seal.allowed_tools = list(seal.allowed_tools or [])
+
         # Replay Attack Protection: Check if this is a one-time seal that was already executed
         if seal.one_time:
             if seal.nonce in self.executed_nonces:
