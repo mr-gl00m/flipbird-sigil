@@ -1,4 +1,4 @@
-# FLIPBIRD SIGIL v5
+# FLIPBIRD SIGIL
 ## Sovereign Integrity & Governance Interface Layer
 
 **The 18-month SaaS killer. Built in an afternoon. Runs on a Raspberry Pi.**
